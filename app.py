@@ -1,79 +1,80 @@
-# Contact Manager API with Prometheus Monitoring
-
-from flask import Flask, jsonify, request
-from prometheus_flask_exporter import PrometheusMetrics
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
-# Enable Prometheus metrics
-metrics = PrometheusMetrics(app)
-
-# In-memory storage for Contact Manager
+# Realistic dataset with 20 contacts
 contacts = [
-    {"id": 1, "name": "Alice", "phone": "9876543210"},
-    {"id": 2, "name": "Bob Jones", "phone": "9123456789"},
+    {"id": 1, "name": "Aarav Sharma", "phone": "9820012345"},
+    {"id": 2, "name": "Aditi Rao", "phone": "9821123456"},
+    {"id": 3, "name": "Ananya Pandey", "phone": "9833345678"},
+    {"id": 4, "name": "Dev Patel", "phone": "9876543210"},
+    {"id": 5, "name": "Ishan Kishan", "phone": "9123456789"},
+    {"id": 6, "name": "Kabir Mehta", "phone": "9988776655"},
+    {"id": 7, "name": "Meera Joshi", "phone": "9898989898"},
+    {"id": 8, "name": "Neha Gupta", "phone": "9765432109"},
+    {"id": 9, "name": "Priya Verma", "phone": "9654321098"},
+    {"id": 10, "name": "Rahul Dravid", "phone": "9543210987"},
+    {"id": 11, "name": "Rohan Kapoor", "phone": "9432109876"},
+    {"id": 12, "name": "Siddharth Malhotra", "phone": "9321098765"},
+    {"id": 13, "name": "Sneha Kulkarni", "phone": "9210987654"},
+    {"id": 14, "name": "Tanvi Shah", "phone": "9109876543"},
+    {"id": 15, "name": "Vikram Rathore", "phone": "9098765432"},
+    {"id": 16, "name": "Yash Dasgupta", "phone": "9887766554"},
+    {"id": 17, "name": "Zara Khan", "phone": "9776655443"},
+    {"id": 18, "name": "Amitabh Sen", "phone": "9665544332"},
+    {"id": 19, "name": "Bhavna Menon", "phone": "9554433221"},
+    {"id": 20, "name": "Chirag Shetty", "phone": "9443322110"},
 ]
 
 
-# Home Route
+# Serve the UI Webpage
 @app.route("/")
 def home():
-    return jsonify({"message": "Contact Manager API is running!"}), 200
+  return render_template("index.html")
 
 
-# Health Check Endpoint
+# PCM-4: Health Check Endpoint
 @app.route("/health", methods=["GET"])
 def health_check():
-    return jsonify({"status": "OK"}), 200
+  return jsonify({"status": "OK"}), 200
 
 
-# View All Contacts
+# PCM-2: Get All Contacts
 @app.route("/items", methods=["GET"])
 def get_contacts():
-    return jsonify(contacts), 200
+  return jsonify(contacts), 200
 
 
-# Search contacts by name
+# Search contacts by Name or ID
 @app.route("/items/search", methods=["GET"])
 def search_contacts():
-    query = request.args.get("name", "").lower()
-    results = [c for c in contacts if query in c["name"].lower()]
-    return jsonify(results), 200
+  query = request.args.get("query", "").strip().lower()
+  if not query:
+    return jsonify(contacts), 200
+
+  results = [
+      c
+      for c in contacts
+      if query in c["name"].lower() or query == str(c["id"])
+  ]
+  return jsonify(results), 200
 
 
-# Get contact by ID
-@app.route("/items/<int:contact_id>", methods=["GET"])
-def get_contact_by_id(contact_id):
-    contact = next(
-        (c for c in contacts if c["id"] == contact_id),
-        None
-    )
-
-    if contact:
-        return jsonify(contact), 200
-
-    return jsonify({"error": "Contact not found"}), 404
-
-
-# Add Contact
+# PCM-3: Add New Contact
 @app.route("/items", methods=["POST"])
 def add_contact():
-    data = request.get_json()
+  data = request.get_json()
+  if not data or "name" not in data or "phone" not in data:
+    return jsonify({"error": "Name and phone are required"}), 400
 
-    if not data or "name" not in data or "phone" not in data:
-        return jsonify({"error": "Name and phone are required"}), 400
-
-    new_contact = {
-        "id": len(contacts) + 1,
-        "name": data["name"],
-        "phone": data["phone"],
-    }
-
-    contacts.append(new_contact)
-
-    return jsonify(new_contact), 201
+  new_contact = {
+      "id": len(contacts) + 1,
+      "name": data["name"].strip(),
+      "phone": data["phone"].strip(),
+  }
+  contacts.append(new_contact)
+  return jsonify(new_contact), 201
 
 
-# Run the application
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+  app.run(host="0.0.0.0", port=5000, debug=True)
