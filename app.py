@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
-# Realistic dataset with 20 contacts
+# Dataset with 20 contacts
 contacts = [
     {"id": 1, "name": "Aarav Sharma", "phone": "9820012345"},
     {"id": 2, "name": "Aditi Rao", "phone": "9821123456"},
@@ -27,54 +27,79 @@ contacts = [
 ]
 
 
-# Serve the UI Webpage
-@app.route("/")
+# Serve the UI Homepage
+@app.route('/')
 def home():
-  return render_template("index.html")
+  return render_template('index.html')
 
 
 # PCM-4: Health Check Endpoint
-@app.route("/health", methods=["GET"])
+@app.route('/health', methods=['GET'])
 def health_check():
-  return jsonify({"status": "OK"}), 200
+  return jsonify({'status': 'OK'}), 200
 
 
 # PCM-2: Get All Contacts
-@app.route("/items", methods=["GET"])
+@app.route('/items', methods=['GET'])
 def get_contacts():
   return jsonify(contacts), 200
 
 
 # Search contacts by Name or ID
-@app.route("/items/search", methods=["GET"])
+@app.route('/items/search', methods=['GET'])
 def search_contacts():
-  query = request.args.get("query", "").strip().lower()
+  query = request.args.get('query', '').strip().lower()
   if not query:
     return jsonify(contacts), 200
 
   results = [
       c
       for c in contacts
-      if query in c["name"].lower() or query == str(c["id"])
+      if query in c['name'].lower() or query == str(c['id'])
   ]
   return jsonify(results), 200
 
 
-# PCM-3: Add New Contact
-@app.route("/items", methods=["POST"])
+# PCM-3: Add New Contact with Validation
+@app.route('/items', methods=['POST'])
 def add_contact():
   data = request.get_json()
-  if not data or "name" not in data or "phone" not in data:
-    return jsonify({"error": "Name and phone are required"}), 400
+  if not data or 'name' not in data or 'phone' not in data:
+    return jsonify({'error': 'Name and phone are required'}), 400
 
-  new_contact = {
-      "id": len(contacts) + 1,
-      "name": data["name"].strip(),
-      "phone": data["phone"].strip(),
-  }
+  name = str(data['name']).strip()
+  phone = str(data['phone']).strip()
+
+  if not name:
+    return jsonify({'error': 'Name cannot be empty'}), 400
+
+  # 1. Reject non-numeric input in phone field
+  if not phone.isdigit():
+    return (
+        jsonify({
+            'error': (
+                'Text/letters are not supported in phone numbers. Please enter'
+                ' numbers only.'
+            )
+        }),
+        400,
+    )
+
+  # 2. Reject phone numbers that are not exactly 10 digits
+  if len(phone) != 10:
+    return (
+        jsonify({
+            'error': (
+                'Phone number must be exactly 10 digits. Please check it out.'
+            )
+        }),
+        400,
+    )
+
+  new_contact = {'id': len(contacts) + 1, 'name': name, 'phone': phone}
   contacts.append(new_contact)
   return jsonify(new_contact), 201
 
 
-if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+  app.run(host='0.0.0.0', port=5000, debug=True)
