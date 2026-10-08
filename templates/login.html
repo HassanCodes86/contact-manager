@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Contact Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body class="auth-body">
+    <div class="auth-card">
+        <h2>🔒 Contact Directory</h2>
+        <p class="subtitle">Enter your 10-digit mobile number to verify</p>
+
+        <div id="alertBox" class="alert hidden"></div>
+
+        <!-- Step 1: Request OTP -->
+        <form id="phoneForm" onsubmit="handleSendOTP(event)">
+            <div class="form-group">
+                <label>Mobile Phone Number</label>
+                <input type="text" id="phoneInput" placeholder="e.g. 9820012345" maxlength="10" required>
+            </div>
+            <button type="submit" id="sendOtpBtn">Get OTP Code</button>
+        </form>
+
+        <!-- Step 2: Verify OTP -->
+        <form id="otpForm" class="hidden" onsubmit="handleVerifyOTP(event)">
+            <div class="form-group">
+                <label>Enter 6-Digit OTP</label>
+                <input type="text" id="otpInput" placeholder="******" maxlength="6" required>
+            </div>
+            <button type="submit" id="verifyOtpBtn">Verify & Login</button>
+            <button type="button" class="btn-secondary" onclick="resetAuthForm()">Change Number</button>
+        </form>
+    </div>
+
+    <script src="/static/js/auth.js?v=2"></script>
+</body>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Contact Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="brand">📱 Private Contact Directory</div>
+        <div class="nav-right">
+            <span id="healthBadge" class="health-badge">Checking System...</span>
+            <span class="user-phone">Logged in: <strong>{{ user_phone }}</strong></span>
+            <button class="btn-danger" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Control Cards Grid -->
+        <div class="grid-2">
+            <!-- Form 1: Add Single Contact -->
+            <div class="card">
+                <h3>➕ Add New Contact</h3>
+                <form id="addContactForm" onsubmit="addContact(event)">
+                    <div class="form-group">
+                        <input type="text" id="contactName" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="contactPhone" placeholder="10-Digit Mobile" maxlength="10" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="contactCategory">
+                            <option value="General">General</option>
+                            <option value="Work">Work</option>
+                            <option value="Family">Family</option>
+                            <option value="VIP">VIP</option>
+                        </select>
+                    </div>
+                    <button type="submit">Save Contact</button>
+                </form>
+            </div>
+
+            <!-- Form 2: Bulk CSV Import -->
+            <div class="card">
+                <h3>📁 Bulk CSV Upload</h3>
+                <p class="hint">Select a .csv file with columns: <code>Name, Phone, Category</code></p>
+                <form id="csvForm" onsubmit="uploadCSV(event)">
+                    <div class="form-group">
+                        <input type="file" id="csvFile" accept=".csv" required>
+                    </div>
+                    <button type="submit" class="btn-secondary">Upload & Process CSV</button>
+                </form>
+                <div id="csvStatus" class="status-msg"></div>
+            </div>
+        </div>
+
+        <!-- Search & Directory Section -->
+        <div class="card margin-top">
+            <div class="filter-bar">
+                <h3>📋 My Saved Contacts</h3>
+                <div class="filter-inputs">
+                    <input type="text" id="searchInput" placeholder="Search by name or phone..."
+                        onkeyup="searchContacts()">
+                    <select id="categoryFilter" onchange="searchContacts()">
+                        <option value="All">All Categories</option>
+                        <option value="General">General</option>
+                        <option value="Work">Work</option>
+                        <option value="Family">Family</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="contacts-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="contactsTableBody">
+                    <!-- Dynamic JavaScript Rendering -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="/static/js/app.js?v=2"></script>
+</body>
+
+</html>
