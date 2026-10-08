@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact Manager</title>
+  <meta name="description" content="Contact Manager - add, search and manage your contacts easily.">
+  <meta name="theme-color" content="#0f1b33">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Icon sprite (inline SVG, no external requests) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.9 10.9 0 0 1 12 19c-6.5 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+  </svg>
+
+  <!-- Decorative background (pure CSS / inline SVG, low opacity) -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-band"></div>
+    <div class="bg-glow bg-glow-a"></div>
+    <div class="bg-glow bg-glow-b"></div>
+    <div class="bg-glow bg-glow-c"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-particles"></div>
+    <svg class="bg-geo" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="1">
+        <polygon points="930,70 1010,116 1010,208 930,254 850,208 850,116"/>
+        <polygon points="930,110 976,137 976,191 930,218 884,191 884,137" opacity=".6"/>
+        <polyline points="1010,116 1110,60 1190,120"/>
+        <polyline points="850,208 760,260 700,230"/>
+        <polygon points="110,610 190,740 30,740"/>
+        <polyline points="190,740 300,700 380,760"/>
+        <polyline points="110,610 60,540 120,480"/>
+        <circle cx="560" cy="150" r="46"/>
+        <circle cx="560" cy="150" r="74" opacity=".5"/>
+        <polyline points="640,640 720,590 810,630 900,570"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="930" cy="70" r="3"/><circle cx="1110" cy="60" r="3"/><circle cx="760" cy="260" r="3"/>
+        <circle cx="110" cy="610" r="3"/><circle cx="380" cy="760" r="3"/><circle cx="120" cy="480" r="3"/>
+        <circle cx="720" cy="590" r="3"/><circle cx="900" cy="570" r="3"/>
+      </g>
+    </svg>
+    <svg class="bg-mesh" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <g fill="none" stroke="currentColor" stroke-width="1">
+        <polyline points="40,330 150,270 260,310 380,230 500,270"/>
+        <polyline points="260,310 300,420 420,460"/>
+        <polyline points="380,230 440,130 560,90"/>
+        <polyline points="780,690 880,640 990,700 1100,630"/>
+        <polyline points="990,700 1030,770"/>
+        <polyline points="1010,330 1100,380 1170,330"/>
+        <polyline points="1100,380 1130,470"/>
+      </g>
+      <g fill="currentColor">
+        <circle cx="150" cy="270" r="2.5"/><circle cx="260" cy="310" r="3"/><circle cx="380" cy="230" r="2.5"/><circle cx="500" cy="270" r="2"/>
+        <circle cx="300" cy="420" r="2"/><circle cx="440" cy="130" r="2.5"/><circle cx="560" cy="90" r="2"/>
+        <circle cx="880" cy="640" r="2.5"/><circle cx="990" cy="700" r="3"/><circle cx="1100" cy="630" r="2"/>
+        <circle cx="1100" cy="380" r="2.5"/><circle cx="1130" cy="470" r="2"/>
+      </g>
+    </svg>
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <div class="app">
+
+    <!-- Backdrop lives inside .app so it stacks beneath the sidebar on mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#dashboard" data-view="dashboard">
+        <span class="brand-mark"><svg class="icon"><use href="#i-users"/></svg></span>
+        <span class="brand-text"><strong>CONTACT</strong><span>MANAGER</span></span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav-link active" href="#dashboard" data-view="dashboard" aria-current="page"><svg class="icon"><use href="#i-grid"/></svg><span>Dashboard</span></a>
+        <a class="nav-link" href="#contacts" data-view="contacts"><svg class="icon"><use href="#i-users"/></svg><span>Contacts</span></a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="side-user" title="{{ user_email }}">Signed in as <strong>{{ user_email }}</strong></div>
+        <a class="nav-link nav-logout" href="{{ url_for('logout') }}"><svg class="icon"><use href="#i-logout"/></svg><span>Logout</span></a>
+        <div class="side-foot">DevOps Mini Project</div>
+      </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <div class="main">
+
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menu-btn" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+          <svg class="icon"><use href="#i-menu"/></svg>
+        </button>
+
+        <div class="topbar-title">
+          <strong class="topbar-brand">Contact Manager</strong>
+          <span class="topbar-kicker">Private &bull; Secure &bull; Simple</span>
+        </div>
+
+        <span class="chip chip-privacy" title="Phone numbers are masked in the browser by default">
+          <svg class="icon"><use href="#i-lock"/></svg><span>Privacy Display On</span>
+        </span>
+      </header>
+
+      <main class="content">
+
+        <!-- ===== VIEW 1: Dashboard ===== -->
+        <section id="dashboard" class="view">
+
+          <!-- Hero: layered gradient, light, grid, geometry (all decorative, pure CSS/SVG) -->
+          <div class="hero">
+            <div class="hero-bg" aria-hidden="true">
+              <div class="hero-light"></div>
+              <div class="hero-glow hero-glow-a"></div>
+              <div class="hero-glow hero-glow-b"></div>
+              <div class="hero-grid"></div>
+              <span class="hero-orb hero-orb-1"></span>
+              <span class="hero-orb hero-orb-2"></span>
+              <span class="hero-orb hero-orb-3"></span>
+              <svg class="hero-geo" viewBox="0 0 640 300" preserveAspectRatio="xMaxYMid slice" focusable="false">
+                <defs>
+                  <linearGradient id="hg-line" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#67e8f9"/>
+                    <stop offset="1" stop-color="#a78bfa"/>
+                  </linearGradient>
+                </defs>
+                <g fill="none" stroke="url(#hg-line)" stroke-width="1.1">
+                  <polygon points="470,20 540,60 540,140 470,180 400,140 400,60"/>
+                  <polygon points="470,48 516,74 516,126 470,152 424,126 424,74" opacity=".65"/>
+                  <polygon points="470,76 492,89 492,111 470,124 448,111 448,89" opacity=".45"/>
+                  <polygon points="590,150 640,179 640,237 590,266 540,237 540,179" opacity=".7"/>
+                  <polyline points="540,60 600,24 640,40"/>
+                  <polyline points="400,140 340,184 270,160"/>
+                  <polyline points="540,140 590,150"/>
+                  <polyline points="470,180 500,236 560,262"/>
+                  <circle cx="330" cy="60" r="34" opacity=".7"/>
+                  <circle cx="330" cy="60" r="56" opacity=".4" stroke-dasharray="3 6"/>
+                  <polygon points="250,270 300,200 350,270" opacity=".55"/>
+                  <polyline points="120,250 190,222 250,246 330,214" opacity=".5"/>
+                </g>
+                <g fill="#a5f3fc">
+                  <circle cx="470" cy="20" r="3"/><circle cx="600" cy="24" r="2.5"/><circle cx="270" cy="160" r="2.5"/>
+                  <circle cx="340" cy="184" r="2.5"/><circle cx="560" cy="262" r="2.5"/><circle cx="190" cy="222" r="2"/>
+                  <circle cx="330" cy="214" r="2"/><circle cx="590" cy="150" r="2.5"/>
+                </g>
+              </svg>
+              <div class="hero-dots"></div>
+            </div>
+
+            <div class="hero-text">
+              <span class="hero-eyebrow"><i></i>Dashboard overview</span>
+              <h1>Contact Manager</h1>
+              <p class="subtitle">Add, search and manage your contacts easily.</p>
+            </div>
+          </div>
+
+          <div class="stats">
+            <article class="card stat stat-blue">
+              <div class="stat-icon s-blue"><svg class="icon"><use href="#i-users"/></svg></div>
+              <div class="stat-body"><span class="stat-label">Total Contacts</span><span class="stat-value" id="stat-total">&mdash;</span></div>
+            </article>
+            <article class="card stat stat-violet">
+              <div class="stat-icon s-violet"><svg class="icon"><use href="#i-lock"/></svg></div>
+              <div class="stat-body"><span class="stat-label">Private Contacts</span><span class="stat-value" id="stat-private">&mdash;</span></div>
+            </article>
+            <article class="card stat stat-teal">
+              <div class="stat-icon s-teal"><svg class="icon"><use href="#i-check"/></svg></div>
+              <div class="stat-body"><span class="stat-label">Directory Status</span><span class="stat-value stat-text" id="stat-directory">Loading</span></div>
+            </article>
+          </div>
+
+          <!-- Directory overview: values calculated from the loaded contacts only -->
+          <div class="card insight">
+            <div class="insight-row">
+              <div class="insight-title">
+                <span class="insight-kicker">Directory Overview</span>
+                <strong id="insight-headline">&mdash;</strong>
+              </div>
+              <span class="insight-pct" id="insight-pct">&mdash;</span>
+            </div>
+            <div class="meter" id="insight-meter" role="progressbar" aria-label="Phone numbers masked" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="insight-bar"></span></div>
+            <p class="insight-sub" id="insight-sub">Checking your directory...</p>
+          </div>
+
+          <div class="card recent">
+            <div class="recent-head">
+              <div class="recent-title">
+                <div class="recent-ico"><svg class="icon"><use href="#i-users"/></svg></div>
+                <div>
+                  <h2>Recent Contacts</h2>
+                  <p class="muted">Your latest additions</p>
+                </div>
+              </div>
+              <button class="link-btn" type="button" data-view="contacts">
+                <span>View all</span><svg class="icon"><use href="#i-arrow"/></svg>
+              </button>
+            </div>
+            <ul class="recent-list" id="recent-list"></ul>
+          </div>
+
+          <div class="privacy-mini">
+            <div class="privacy-mini-icon"><svg class="icon"><use href="#i-shield"/></svg></div>
+            <div class="privacy-mini-text">
+              <strong>Privacy Display On</strong>
+              <span>Phone numbers are masked by default.</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== VIEW 2: Contacts ===== -->
+        <section id="contacts" class="view" hidden>
+          <div class="card directory">
+
+            <div class="directory-head">
+              <div>
+                <h2>Contacts</h2>
+                <p class="muted" id="result-count" aria-live="polite">Loading contacts...</p>
+              </div>
+              <button class="btn btn-primary" type="button" data-open-modal>
+                <svg class="icon"><use href="#i-plus"/></svg><span>Add Contact</span>
+              </button>
+            </div>
+
+            <div class="toolbar">
+              <div class="search">
+                <svg class="icon search-icon"><use href="#i-search"/></svg>
+                <input id="search-input" type="search" placeholder="Name, phone or email" autocomplete="off" aria-label="Search contacts by name, phone or email">
+                <button class="search-clear" id="search-clear" type="button" aria-label="Clear search" hidden><svg class="icon"><use href="#i-x"/></svg></button>
+              </div>
+              <div class="segmented" role="group" aria-label="Filter contacts">
+                <button type="button" class="seg active" data-filter="all">All Contacts</button>
+                <button type="button" class="seg" data-filter="private">Private</button>
+              </div>
+            </div>
+
+            <div class="contact-grid" id="contact-grid" aria-live="polite"></div>
+
+            <p class="table-note"><svg class="icon"><use href="#i-lock"/></svg><span>Display-level privacy: masking happens in the browser and is not server-side access control.</span></p>
+          </div>
+        </section>
+
+      </main>
+
+      <footer class="footer">
+        <strong>Contact Manager</strong><span>&bull;</span><span>DevOps Mini Project</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ========== ADD CONTACT MODAL ========== -->
+  <div class="overlay" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <h3 id="modal-title">Add Contact</h3>
+          <p class="muted">Save a new contact to your directory.</p>
+        </div>
+        <button class="icon-btn" type="button" data-close aria-label="Close"><svg class="icon"><use href="#i-x"/></svg></button>
+      </div>
+
+      <form id="contact-form" novalidate>
+        <div class="form-error" id="form-error" role="alert" hidden></div>
+
+        <div class="field" id="field-name">
+          <label for="input-name">Full Name</label>
+          <input id="input-name" name="name" type="text" maxlength="100" placeholder="e.g. Ayesha Khan" autocomplete="off">
+          <p class="field-error" id="err-name"></p>
+        </div>
+
+        <div class="field" id="field-phone">
+          <label for="input-phone">Phone Number</label>
+          <div class="input-wrap">
+            <svg class="icon input-icon"><use href="#i-phone"/></svg>
+            <input id="input-phone" name="phone" type="tel" inputmode="numeric" maxlength="15" placeholder="10-digit mobile number" autocomplete="off">
+            <span class="counter" id="phone-counter">0/10</span>
+          </div>
+          <p class="field-error" id="err-phone"></p>
+        </div>
+
+        <div class="field" id="field-email">
+          <label for="input-email">Email Address</label>
+          <div class="input-wrap">
+            <svg class="icon input-icon"><use href="#i-mail"/></svg>
+            <input id="input-email" name="email" type="email" maxlength="120" placeholder="name@example.com" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="field-error" id="err-email"></p>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" id="save-btn" type="submit"><span class="spinner" hidden></span><span class="btn-label">Save Contact</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== DELETE CONFIRMATION ========== -->
+  <div class="overlay" id="confirm-modal" hidden>
+    <div class="modal modal-sm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-text">
+      <div class="confirm-icon"><svg class="icon"><use href="#i-trash"/></svg></div>
+      <h3 id="confirm-title">Delete contact</h3>
+      <p class="muted" id="confirm-text">Are you sure you want to delete this contact?</p>
+      <p class="confirm-name" id="confirm-name"></p>
+      <div class="modal-actions modal-actions-center">
+        <button class="btn btn-ghost" type="button" id="confirm-cancel" data-close>Cancel</button>
+        <button class="btn btn-danger" type="button" id="confirm-delete"><span class="spinner" hidden></span><span class="btn-label">Delete</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== TOASTS ========== -->
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
